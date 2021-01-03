@@ -28,19 +28,19 @@ void KalmanFilter::Predict() {
   /**
    * TODO: predict the state
    */
-  std::cout << "Enter KalmanFilter::Predict()" << std::endl;
+  //std::cout << "Enter KalmanFilter::Predict()" << std::endl;
   x_ = F_ * x_;
   MatrixXd Ft = F_.transpose();
   P_ = F_ * P_ * Ft + Q_;
 
-  std::cout << "prediction succesfull" << std::endl;
+  //std::cout << "prediction succesfull" << std::endl;
 }
 
 void KalmanFilter::Update(const VectorXd &z) {
   /**
    * TODO: update the state by using Kalman Filter equations
    */
-  std::cout << "Enter KalmanFilter::Update" << std::endl;
+  //std::cout << "Enter KalmanFilter::Update" << std::endl;
 
   VectorXd z_pred = H_ * x_;
   VectorXd y = z - z_pred;
@@ -55,7 +55,7 @@ void KalmanFilter::Update(const VectorXd &z) {
   MatrixXd I = MatrixXd::Identity(x_size, x_size);
   P_ = (I - K * H_) * P_;
 
-  std::cout << "update (laser) succesfull" << std::endl;
+  //std::cout << "update (laser) succesfull" << std::endl;
 }
 
 void KalmanFilter::UpdateEKF(const VectorXd &z) {
@@ -75,7 +75,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   z_cartesian << x, y, vx, vy;
   ekf_.Hj_ = tools.CalculateJacobian(&z_cartesian);
 */
-  std::cout << "Enter KalmanFilter::UpdateEKF" << std::endl;
+  //std::cout << "Enter KalmanFilter::UpdateEKF" << std::endl;
 
   double px = x_[0];
   double py = x_[1];
@@ -94,6 +94,15 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 
  // Updating
   VectorXd y = z - hx;
+ // namalization of the y, hence to the tranformation 
+  
+  if (y(1) < -M_PI){
+    y(1) += 2 *M_PI;
+    }
+  else if (y(1) > M_PI){
+    y(1) -= 2*M_PI;
+    }
+ 
   MatrixXd Ht = H_.transpose();
   MatrixXd S = H_ * P_ * Ht + R_;
   MatrixXd Si = S.inverse();
@@ -105,5 +114,5 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   MatrixXd I = MatrixXd::Identity(x_size, x_size);
   P_ = (I - K * H_) * P_;
 
-  std::cout<<"update (radar) succesfull"<<std::endl;
+  //std::cout<<"update (radar) succesfull"<<std::endl;
 }
