@@ -92,8 +92,8 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       // Calculate point
       float x = roh * cos(phi);
       float y = roh * sin(phi);
-      float vx = roh * cos(phi);
-      float vy = roh * sin(phi);
+      float vx = roh_dot * cos(phi);
+      float vy = roh_dot * sin(phi);
       // Updating
       ekf_.x_ <<  x, y, vx, vy;
       //std::cout << "Exit FusionEKF::ProcessMeasurement Initialization Radar" << std::endl;
